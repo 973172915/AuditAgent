@@ -1,0 +1,87 @@
+# 数据表结构定义（供 LLM 生成 SQL 时参考）
+tables:
+  bank_statement:
+    description: "银行流水表，记录企业银行账户的所有收支交易"
+    columns:
+      - name: 交易日期
+        type: DATE
+        description: "交易发生日期，格式 YYYY-MM-DD"
+      - name: 入账金额
+        type: DECIMAL(18,2)
+        description: "收入金额（正数），0.00 表示无收入"
+      - name: 出账金额
+        type: DECIMAL(18,2)
+        description: "支出金额（正数），0.00 表示无支出"
+      - name: 余额
+        type: DECIMAL(18,2)
+        description: "交易后账户余额"
+      - name: 对方账户
+        type: VARCHAR
+        description: "对方银行账号"
+      - name: 对方户名
+        type: VARCHAR
+        description: "对方户名（个人或企业）"
+      - name: 摘要
+        type: VARCHAR
+        description: "交易摘要说明"
+      - name: 交易流水号
+        type: VARCHAR
+        description: "唯一交易标识"
+
+  ledger:
+    description: "财务账簿表，记录会计凭证分录"
+    columns:
+      - name: 凭证号
+        type: VARCHAR
+        description: "会计凭证编号"
+      - name: 记账日期
+        type: DATE
+        description: "记账日期，格式 YYYY-MM-DD"
+      - name: 科目代码
+        type: VARCHAR
+        description: "会计科目编码"
+      - name: 科目名称
+        type: VARCHAR
+        description: "会计科目名称"
+      - name: 借方金额
+        type: DECIMAL(18,2)
+        description: "借方发生额"
+      - name: 贷方金额
+        type: DECIMAL(18,2)
+        description: "贷方发生额"
+      - name: 摘要
+        type: VARCHAR
+        description: "业务摘要"
+      - name: 对方科目
+        type: VARCHAR
+        description: "对应科目名称"
+      - name: 辅助核算
+        type: VARCHAR
+        description: "辅助核算项（通常是往来单位名称）"
+
+# 常用查询示例（帮助 LLM 理解业务场景）
+examples:
+  - query: "查9月份金额大于10万的支出"
+    sql: |
+      SELECT * FROM bank_statement
+      WHERE 交易日期 >= '2024-09-01' AND 交易日期 <= '2024-09-30'
+        AND 出账金额 > 100000
+      ORDER BY 出账金额 DESC
+
+  - query: "统计9月各对手方的交易总额"
+    sql: |
+      SELECT 对方户名,
+             SUM(入账金额) as 总收入,
+             SUM(出账金额) as 总支出,
+             COUNT(*) as 交易笔数
+      FROM bank_statement
+      WHERE 交易日期 >= '2024-09-01' AND 交易日期 <= '2024-09-30'
+      GROUP BY 对方户名
+      ORDER BY (SUM(入账金额) + SUM(出账金额)) DESC
+
+  - query: "找出重复交易"
+    sql: |
+      SELECT 交易日期, 出账金额, 对方户名, 摘要, COUNT(*) as cnt
+      FROM bank_statement
+      GROUP BY 交易日期, 出账金额, 对方户名, 摘要
+      HAVING COUNT(*) > 1

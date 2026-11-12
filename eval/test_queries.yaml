@@ -1,0 +1,65 @@
+# 评测用例集
+# 每个用例包含：自然语言问题 + 期望结果描述（用于人工或自动验证）
+
+cases:
+  - id: TC01
+    query: "查9月份所有金额大于10万的支出交易"
+    expect:
+      min_rows: 3
+      must_contain_columns: [交易日期, 出账金额, 对方户名]
+    difficulty: easy
+
+  - id: TC02
+    query: "统计9月各对手方的总收入和总支出，按总额降序排列"
+    expect:
+      min_rows: 5
+      must_contain_columns: [对方户名]
+    difficulty: medium
+
+  - id: TC03
+    query: "找出可能重复的交易记录"
+    expect:
+      min_rows: 1
+    difficulty: medium
+
+  - id: TC04
+    query: "分析深圳市XX贸易有限公司在9月的所有交易明细"
+    expect:
+      min_rows: 3
+    difficulty: easy
+
+  - id: TC05
+    query: "9月份银行流水的总收入和总支出分别是多少？净流入是多少？"
+    expect:
+      min_rows: 1
+    difficulty: easy
+
+  - id: TC06
+    query: "列出所有超过20万的单笔交易，无论是收入还是支出"
+    expect:
+      min_rows: 4
+    difficulty: medium
+
+  - id: TC07
+    query: "按周统计9月份的资金流出情况"
+    expect:
+      min_rows: 3
+    difficulty: hard
+
+  - id: TC08
+    query: "哪些对手方在9月既有收入又有支出？"
+    expect:
+      min_rows: 2
+    difficulty: hard
+
+  - id: TC09
+    query: "计算每个对手方的平均单笔交易金额"
+    expect:
+      min_rows: 5
+    difficulty: medium
+
+  - id: TC10
+    query: "找出9月22日的大额交易详情"
+    expect:
+      min_rows: 1
+    difficulty: easy
